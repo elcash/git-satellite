@@ -1,0 +1,13 @@
+#!/bin/bash
+#git config --global alias.ac autocommit
+
+if [ $# -ne 1 ]; then
+    echo "USAGE: $0 /path/to/repo"
+    exit 1
+fi
+FILE=$1
+cd $FILE || { echo "cannot cd to "$FILE""; exit 1 }
+git add --all
+git commit -a -m "autocommitted"
+echo "autocommit done."
+exit 0
