@@ -1,4 +1,4 @@
-#!/bin/bash -xv
+#!/bin/bash
 
 # forester is for when you have multiple branches off develop and you want to see where you stand amongst them
 #
