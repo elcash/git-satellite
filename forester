@@ -52,8 +52,10 @@ ARGS=
 i=0
 # loop thru git branches, adding to array (as ARGS[$i]) if we match a branch prefix
 for branch in ${BRANCH_PREFIX[*]}; do
-    [ $(git branch | cut -c'3-' | grep "$branch") ] && ARGS[$i]=$branch || continue;
-    i=$((i+1))
+    ARGS[$i]=$(git branch | cut -c'3-' | grep "^$branch")
+    if [ $? == 0 ]; then
+        i=$((i+1))
+    fi
 done
 
 if [ ${#ARGS} == 0 ]; then
@@ -82,9 +84,9 @@ printhrule()
     echo 
 }
 
-for i in ${ARGS[@]}
+for log in ${ARGS[*]}
 do
-    printline $i >> $OUTFILE    
+    printline "$log" >> $OUTFILE
 done
 
 echo "appended $i log entries to $OUTFILE"
