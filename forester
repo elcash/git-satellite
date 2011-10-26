@@ -2,12 +2,47 @@
 
 # forester is for when you have multiple branches off develop and you want to see where you stand amongst them
 #
+# you can bypass this script by doing:
+
+# for branch in (topic/a topic/b wip/c); do
+#   git log --stat --since=3days $branch >> /tmp/forester.txt \
+#   && echo -e "\n\n=============\n$branch\n=============\n\n" >> /tmp/forester.txt
+# done
+
+# with the script, I just do `forester -b"topic wip"`
+usage()
+{
+    cat <<- EOT
+
+Usage: $0 [options] [--]
+
+Options:
+-h|help             Display this message
+-d|days             Number days to go back -- defaults to 3
+-o|outfile          Defaults to /tmp/forester.txt
+-b|branch-prefix    Use -b"feature topic wip" to include branches beginning with those prefixes
+
+EOT
+}
+
+while getopts ":hb:o:d:" opt
+do
+    case $opt in
+        h|help          )  usage; exit 0;;
+        d|days          )  DAYS=$OPTARG;;
+        o|outfile       )  OUTFILE=$OPTARG;;
+        b|branch-prefix )  BRANCH_PREFIX="$OPTARG";;
+        \?              )  echo -e "\n  Option noexists : $OPTARG\n"; usage; exit 1;;
+    esac
+done
+shift $(($OPTIND-1))
+
 # how many days back?
-DAYS=${1:-"3"}
+DAYS=${DAYS:-"3"}
 
 # what branches do you want to grab recent logs from?
-BRANCH_PREFIX=${2:-"feature"}
-OUTFILE=${3:-"/tmp/forester.txt"}
+BRANCH_PREFIX=${BRANCH_PREFIX:-feature}
+OUTFILE=${OUTFILE:-"/tmp/forester.txt"}
 
 echo "see forest for trees"
 # fail if outside a git repository
