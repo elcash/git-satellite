@@ -46,9 +46,15 @@ OUTFILE=${OUTFILE:-"/tmp/forester.txt"}
 
 echo "see forest for trees"
 # fail if outside a git repository
-git branch || { echo "you must be in a repository" ; exit 1 ;}
+git branch 1>/dev/null || { echo "you must be in a repository" ; exit 1 ;}
 
-ARGS="$(git branch | cut -c'3-' | grep "^$BRANCH_PREFIX" | xargs)"
+ARGS=
+i=0
+# loop thru git branches, adding to array (as ARGS[$i]) if we match a branch prefix
+for branch in ${BRANCH_PREFIX[*]}; do
+    [ $(git branch | cut -c'3-' | grep "$branch") ] && ARGS[$i]=$branch || continue;
+    i=$((i+1))
+done
 
 if [ ${#ARGS} == 0 ]; then
 { echo "No branches matching $BRANCH_PREFIX" ; exit 1 ;}
