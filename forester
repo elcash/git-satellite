@@ -44,7 +44,7 @@ DAYS=${DAYS:-"3"}
 BRANCH_PREFIX=${BRANCH_PREFIX:-feature}
 OUTFILE=${OUTFILE:-"/tmp/forester.txt"}
 
-echo "see forest for trees"
+echo "seeing the forest for the trees"
 # fail if outside a git repository
 git branch 1>/dev/null || { echo "you must be in a repository" ; exit 1 ;}
 
@@ -57,26 +57,28 @@ for branch in ${BRANCH_PREFIX[*]}; do
 done
 
 if [ ${#ARGS} == 0 ]; then
-{ echo "No branches matching $BRANCH_PREFIX" ; exit 1 ;}
+{ echo "No branches matching $BRANCH_PREFIX" ; usage; exit 1 ;}
 fi
 
+# draw command for each branch we are logging
 printline()
 {
     echo
-    printhrule $i
-    echo $i
-    printhrule $i
+    printhrule $log
+    echo $log
+    printhrule $log
     echo
     git log --stat --pretty=oneline --since=${DAYS}days $1
 }
 
+# echo number of `=' according to length of string we {under,over}line
 printhrule()
 {
     for j in `seq 1 ${#1}`
     do
         echo -n =
     done
-    # adds a libe break
+    # adds a line break
     echo 
 }
 
@@ -85,3 +87,5 @@ do
     printline $i >> $OUTFILE    
 done
 
+echo "appended $i log entries to $OUTFILE"
+exit 0
